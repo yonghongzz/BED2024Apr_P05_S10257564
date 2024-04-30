@@ -11,7 +11,7 @@ const getAllBooks = async (req,res) => {
 };
 
 const getBookById = async (req,res) => {
-    const bookId = req.params.id;
+    const bookId = parseInt(req.params.id);
     try{
         const book = await Book.getBookById(bookId);
         if(!book){
@@ -40,7 +40,7 @@ const updateBook = async(req,res) => {
     const newBookData = req.body;
     try{
         const updatedBook = await Book.updateBook(bookId,newBookData);
-        if(!updateBook){
+        if(!updatedBook){
             return res.status(404).send("Book not found");
         }
         res.json(updatedBook);
