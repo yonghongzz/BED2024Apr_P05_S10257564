@@ -4,12 +4,14 @@ const sql = require('mssql');
 const dbConfig = require('./dbConfig');
 const bodyParser = require('body-parser');
 const validateBook = require('./middlewares/validateBook');
+const staticMiddleware = express.static("public");
 
 const app = express();
 const port = 3000;
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(staticMiddleware);
 
 app.get("/books",booksController.getAllBooks);
 app.get("/books/:id",booksController.getBookById);
