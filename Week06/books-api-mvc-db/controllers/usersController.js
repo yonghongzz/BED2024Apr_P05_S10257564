@@ -94,5 +94,6 @@ const getUserById = async (req, res) => {
     createUser,
     updateUser,
     deleteUser,
+    searchUsers,
     getUsersWithBooks
   };
