@@ -17,7 +17,7 @@ app.post("/users",validateUser, usersController.createUser);
 app.put("/users/:id", usersController.updateUser); 
 app.delete("/users/:id", usersController.deleteUser);
 app.get("/users/search", usersController.searchUsers);  
-app.get("/users/with-books", usersController.getUsersWithBooks);x   
+app.get("/users/with-books", usersController.getUsersWithBooks);   
 
 app.listen(port,async() => {
     try{

@@ -70,8 +70,7 @@ const getUserById = async (req, res) => {
     const searchTerm = req.query.searchTerm; // Extract search term from query params
   
     try {
-      const userController = new User();
-      const users = await userController.searchUsers(searchTerm);
+      const users = await User.searchUsers(searchTerm);
       res.json(users);
     } catch (error) {
       console.error(error);
@@ -81,7 +80,7 @@ const getUserById = async (req, res) => {
 
   async function getUsersWithBooks(req, res) {
     try {
-      const users = await User.getUsersWithBooks();
+      const users = await User.getUsersWithBook();
       res.json(users);
     } catch (error) {
       console.error(error);
