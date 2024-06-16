@@ -1,29 +1,29 @@
 const dbConfig = require("../dbConfig");
 const sql = require("mssql");
 
-class User {
-    constructor(id,username,email){
+class Book {
+    constructor(id,title,author){
         this.id = id;
-        this.username = username;
-        this.email = email;
+        this.title = title;
+        this.author = author;
     }
 
-    static async getAllUsers(){
+    static async getAllBooks(){
         const connection = await sql.connect(dbConfig);
-        const sqlQuery = `SELECT * FROM Users`;
+        const sqlQuery = `SELECT * FROM Books`;
         const request = connection.request();
         const result = await request.query(sqlQuery);
 
         connection.close();
 
         return result.recordset.map(
-            (row) => new User(row.id,row.username,row.email)
+            (row) => new Book(row.id,row.title,row.author)
         );
     }
 
-    static async getUserById(id){
+    static async getBookById(id){
         const connection = await sql.connect(dbConfig);
-        const sqlQuery = `SELECT * FROM User WHERE id = @id`;
+        const sqlQuery = `SELECT * FROM Books WHERE id = @id`;
         const request = connection.request();
         request.input("id",id);
         const result = await request.query(sqlQuery);
@@ -33,52 +33,51 @@ class User {
         return result.recordset[0]
         ? new Book(
             result.recordset[0].id,
-            result.recordset[0].username,
-            result.recordset[0].email
+            result.recordset[0].title,
+            result.recordset[0].author
         )
         : null;
     }
 
-    static async createUser(newUserData) {
+    static async createBook(newBookData) {
         const connection = await sql.connect(dbConfig);
     
-        const sqlQuery = `INSERT INTO User (username, email) VALUES (@username, @email); SELECT SCOPE_IDENTITY() AS id;`; // Retrieve ID of inserted record
+        const sqlQuery = `INSERT INTO Books (title, author) VALUES (@title, @author); SELECT SCOPE_IDENTITY() AS id;`; // Retrieve ID of inserted record
     
         const request = connection.request();
-        request.input("username", newUserData.username);
-        request.input("email", newUserData.email);
+        request.input("title", newBookData.title);
+        request.input("author", newBookData.author);
     
         const result = await request.query(sqlQuery);
     
         connection.close();
     
         // Retrieve the newly created book using its ID
-        return this.getUserById(result.recordset[0].id);
+        return this.getBookById(result.recordset[0].id);
       }
 
     
-    static async updateUser(id, newUserData) {
+    static async updateBook(id, newBookData) {
         const connection = await sql.connect(dbConfig);
 
-        const sqlQuery = `UPDATE User SET username = @username, email = @email WHERE id = @id`; // Parameterized query
+        const sqlQuery = `UPDATE Books SET title = @title, author = @author WHERE id = @id`; // Parameterized query
 
         const request = connection.request();
         request.input("id", id);
-        request.input("username", newUserData.username || null); // Handle optional fields
-        request.input("email", newUserData.email || null);
+        request.input("title", newBookData.title || null); // Handle optional fields
+        request.input("author", newBookData.author || null);
 
         await request.query(sqlQuery);
 
         connection.close();
 
-        return this.getUserById(id); // returning the updated User data
+        return this.getBookById(id); // returning the updated book data
     }
 
-    static async deleteUser(id) {
+    static async deleteBook(id) {
         const connection = await sql.connect(dbConfig);
 
-        const sqlQuery = `DELETE FROM User
-         WHERE id = @id`; // Parameterized query
+        const sqlQuery = `DELETE FROM Books WHERE id = @id`; // Parameterized query
 
         const request = connection.request();
         request.input("id", id);
@@ -90,4 +89,4 @@ class User {
     }
 }
 
-module.exports = User;
+module.exports = Book;

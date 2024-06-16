@@ -1,29 +1,29 @@
 const dbConfig = require("../dbConfig");
 const sql = require("mssql");
 
-class Book {
-    constructor(id,title,author){
+class User {
+    constructor(id,username,email){
         this.id = id;
-        this.title = title;
-        this.author = author;
+        this.username = username;
+        this.email = email;
     }
 
-    static async getAllBooks(){
+    static async getAllUsers(){
         const connection = await sql.connect(dbConfig);
-        const sqlQuery = `SELECT * FROM Books`;
+        const sqlQuery = `SELECT * FROM Users`;
         const request = connection.request();
         const result = await request.query(sqlQuery);
 
         connection.close();
 
         return result.recordset.map(
-            (row) => new Book(row.id,row.title,row.author)
+            (row) => new User(row.id,row.username,row.email)
         );
     }
 
-    static async getBookById(id){
+    static async getUserById(id){
         const connection = await sql.connect(dbConfig);
-        const sqlQuery = `SELECT * FROM Books WHERE id = @id`;
+        const sqlQuery = `SELECT * FROM User WHERE id = @id`;
         const request = connection.request();
         request.input("id",id);
         const result = await request.query(sqlQuery);
@@ -33,51 +33,52 @@ class Book {
         return result.recordset[0]
         ? new Book(
             result.recordset[0].id,
-            result.recordset[0].title,
-            result.recordset[0].author
+            result.recordset[0].username,
+            result.recordset[0].email
         )
         : null;
     }
 
-    static async createBook(newBookData) {
+    static async createUser(newUserData) {
         const connection = await sql.connect(dbConfig);
     
-        const sqlQuery = `INSERT INTO Books (title, author) VALUES (@title, @author); SELECT SCOPE_IDENTITY() AS id;`; // Retrieve ID of inserted record
+        const sqlQuery = `INSERT INTO User (username, email) VALUES (@username, @email); SELECT SCOPE_IDENTITY() AS id;`; // Retrieve ID of inserted record
     
         const request = connection.request();
-        request.input("title", newBookData.title);
-        request.input("author", newBookData.author);
+        request.input("username", newUserData.username);
+        request.input("email", newUserData.email);
     
         const result = await request.query(sqlQuery);
     
         connection.close();
     
         // Retrieve the newly created book using its ID
-        return this.getBookById(result.recordset[0].id);
+        return this.getUserById(result.recordset[0].id);
       }
 
     
-    static async updateBook(id, newBookData) {
+    static async updateUser(id, newUserData) {
         const connection = await sql.connect(dbConfig);
 
-        const sqlQuery = `UPDATE Books SET title = @title, author = @author WHERE id = @id`; // Parameterized query
+        const sqlQuery = `UPDATE User SET username = @username, email = @email WHERE id = @id`; // Parameterized query
 
         const request = connection.request();
         request.input("id", id);
-        request.input("title", newBookData.title || null); // Handle optional fields
-        request.input("author", newBookData.author || null);
+        request.input("username", newUserData.username || null); // Handle optional fields
+        request.input("email", newUserData.email || null);
 
         await request.query(sqlQuery);
 
         connection.close();
 
-        return this.getBookById(id); // returning the updated book data
+        return this.getUserById(id); // returning the updated User data
     }
 
-    static async deleteBook(id) {
+    static async deleteUser(id) {
         const connection = await sql.connect(dbConfig);
 
-        const sqlQuery = `DELETE FROM Books WHERE id = @id`; // Parameterized query
+        const sqlQuery = `DELETE FROM User
+         WHERE id = @id`; // Parameterized query
 
         const request = connection.request();
         request.input("id", id);
@@ -143,4 +144,4 @@ class Book {
     }
 }
 
-module.exports = Book;
+module.exports = User;
