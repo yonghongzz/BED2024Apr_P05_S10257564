@@ -31,7 +31,7 @@ class User {
         connection.close();
 
         return result.recordset[0]
-        ? new Book(
+        ? new User(
             result.recordset[0].id,
             result.recordset[0].username,
             result.recordset[0].email
